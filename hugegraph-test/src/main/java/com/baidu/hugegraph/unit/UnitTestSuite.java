@@ -28,6 +28,7 @@ import com.baidu.hugegraph.unit.cache.CachedSchemaTransactionTest;
 import com.baidu.hugegraph.unit.cache.RamCacheTest;
 import com.baidu.hugegraph.unit.core.AnalyzerTest;
 import com.baidu.hugegraph.unit.core.BackendMutationTest;
+import com.baidu.hugegraph.unit.core.BytesBufferTest;
 import com.baidu.hugegraph.unit.core.CassandraTest;
 import com.baidu.hugegraph.unit.core.ConditionQueryFlattenTest;
 import com.baidu.hugegraph.unit.core.DataTypeTest;
@@ -41,8 +42,8 @@ import com.baidu.hugegraph.unit.core.SecurityManagerTest;
 import com.baidu.hugegraph.unit.core.SerialEnumTest;
 import com.baidu.hugegraph.unit.rocksdb.RocksDBCountersTest;
 import com.baidu.hugegraph.unit.rocksdb.RocksDBSessionsTest;
-import com.baidu.hugegraph.unit.util.JsonUtilTest;
 import com.baidu.hugegraph.unit.util.IdUtilTest;
+import com.baidu.hugegraph.unit.util.JsonUtilTest;
 import com.baidu.hugegraph.unit.util.VersionTest;
 
 @RunWith(Suite.class)
@@ -68,6 +69,7 @@ import com.baidu.hugegraph.unit.util.VersionTest;
     QueryTest.class,
     SecurityManagerTest.class,
     ExceptionTest.class,
+    BytesBufferTest.class,
 
     /* cassandra */
     CassandraTest.class,

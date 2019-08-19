@@ -35,9 +35,9 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
 
 import com.baidu.hugegraph.HugeException;
 import com.baidu.hugegraph.config.HugeConfig;
+import com.baidu.hugegraph.license.LicenseVerifier;
 import com.baidu.hugegraph.core.GraphManager;
 import com.baidu.hugegraph.core.WorkLoad;
-import com.baidu.hugegraph.license.LicenseVerifier;
 import com.baidu.hugegraph.util.E;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
@@ -68,8 +68,8 @@ public class ApplicationConfig extends ResourceConfig {
         register(new InstrumentedResourceMethodApplicationListener(registry));
     }
 
-    private void installLicense() {
-        LicenseVerifier.instance().install();
+    private void installLicense(HugeConfig config) {
+        LicenseVerifier.instance(config).install();
     }
 
     private class ConfFactory extends AbstractBinder
@@ -110,7 +110,7 @@ public class ApplicationConfig extends ResourceConfig {
                 @Override
                 public void onEvent(ApplicationEvent event) {
                     if (event.getType() == this.EVENT_INITED) {
-                        ApplicationConfig.this.installLicense();
+                        ApplicationConfig.this.installLicense(conf);
                         GraphManagerFactory.this.manager = new GraphManager(conf);
                     }
                 }

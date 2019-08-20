@@ -30,6 +30,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.Contains;
 import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Step;
+import org.apache.tinkerpop.gremlin.process.traversal.TextP;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.step.HasContainerHolder;
@@ -81,13 +82,29 @@ public final class TraversalUtil {
             step = step.getNextStep();
             if (step instanceof HasStep) {
                 HasContainerHolder holder = (HasContainerHolder) step;
-                for (HasContainer has : holder.getHasContainers()) {
-                    if (!GraphStep.processHasContainerIds(newStep, has)) {
-                        newStep.addHasContainer(has);
+                List<HasContainer> hasContainers = holder.getHasContainers();
+                int handledIdx = 0;
+                boolean allHandled = true;
+                for (HasContainer has : hasContainers) {
+                    P<?> predicate = has.getPredicate();
+                    if (GraphStep.processHasContainerIds(newStep, has) ||
+                        predicate instanceof TextP ||
+                        predicate.getBiPredicate() == Contains.without) {
+                        allHandled = false;
+                        break;
                     }
+                    newStep.addHasContainer(has);
+                    handledIdx++;
+                }
+                // Remove head idx has containers
+                for (int i = 0; i < handledIdx; i++) {
+                    HasContainer has = hasContainers.get(0);
+                    ((HasStep) step).removeHasContainer(has);
                 }
                 TraversalHelper.copyLabels(step, step.getPreviousStep(), false);
-                traversal.removeStep(step);
+                if (allHandled) {
+                    traversal.removeStep(step);
+                }
             }
         } while (step instanceof HasStep || step instanceof NoOpBarrierStep);
     }

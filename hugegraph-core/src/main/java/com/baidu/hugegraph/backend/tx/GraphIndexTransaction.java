@@ -508,7 +508,7 @@ public class GraphIndexTransaction extends AbstractTransaction {
             locks.lockReads(LockUtil.INDEX_LABEL_REBUILD, indexLabel.id());
 
             Set<Id> ids = InsertionOrderUtil.newSet();
-            Iterator<BackendEntry> entries = super.query(query);
+            Iterator<BackendEntry> entries = super.query(query).iterator();
             while(entries.hasNext()) {
                 HugeIndex index = this.serializer.readIndex(graph(), query,
                                                             entries.next());
@@ -1364,7 +1364,8 @@ public class GraphIndexTransaction extends AbstractTransaction {
                     continue;
                 }
                 // Query and delete index equals element id
-                for (Iterator<BackendEntry> it = tx.query(q); it.hasNext();) {
+                Iterator<BackendEntry> it = tx.query(q).iterator();
+                while (it.hasNext()) {
                     BackendEntry entry = it.next();
                     HugeIndex index = serializer.readIndex(graph(), q, entry);
                     if (index.elementIds().contains(element.id())) {

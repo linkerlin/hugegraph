@@ -3377,9 +3377,10 @@ public class VertexCoreTest extends BaseCoreTest {
               .create();
         schema.indexLabel("userByName").onV("user").by("name", "city", "age")
               .unique().create();
-        Vertex v = graph().addVertex(T.label, "user", "name", "Tom",
-                                     "city", "Beijing", "age", 18);
+        graph().addVertex(T.label, "user", "name", "Tom",
+                          "city", "Beijing", "age", 18);
         graph().tx().commit();
+
         // Nullable properties
         graph().addVertex(T.label, "user", "name", "Tom", "city", "Beijing");
         graph().tx().commit();

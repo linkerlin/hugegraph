@@ -101,13 +101,10 @@ public final class QueryList {
              * NOTE: PageEntryIterator query will change every fetch time.
              * TODO: sort results by input ids in each page.
              */
-            return new QueryResults(iterator, iterator.query());
-        } else {
-            return this.fetchAll();
+            return iterator.results();
         }
-    }
 
-    protected QueryResults fetchAll() {
+        // Fetch all results once
         return QueryResults.flatMap(this.queries.iterator(), q -> q.iterator());
     }
 
@@ -224,7 +221,7 @@ public final class QueryList {
 
         @Override
         public QueryResults iterator() {
-            if (this.holders.size() <= 1) {
+            if (this.holders.size() == 1) {
                 return this.each(this.holders.get(0));
             }
             return QueryResults.flatMap(this.holders.iterator(), this::each);
@@ -284,7 +281,7 @@ public final class QueryList {
             this.page = page;
         }
 
-        public Iterator<BackendEntry> iterator() {
+        public Iterator<BackendEntry> get() {
             return this.iterator;
         }
 

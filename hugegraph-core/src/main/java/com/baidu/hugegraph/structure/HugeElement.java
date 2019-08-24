@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.apache.tinkerpop.gremlin.structure.Element;
@@ -331,6 +332,9 @@ public abstract class HugeElement implements Element, GraphType, Idfiable {
         } else if (idValue instanceof Number) {
             // Long id
             return IdGenerator.of(((Number) idValue).longValue());
+        } else if (idValue instanceof UUID) {
+            // UUID id
+            return IdGenerator.of((UUID) idValue);
         } else if (idValue instanceof Id) {
             // Id itself
             return (Id) idValue;
@@ -341,8 +345,8 @@ public abstract class HugeElement implements Element, GraphType, Idfiable {
 
         // Throw if error type
         throw new UnsupportedOperationException(String.format(
-                  "Invalid element id type: %s, must be a string",
-                  idValue.getClass().getSimpleName()));
+                  "Invalid element id: %s(%s)",
+                  idValue, idValue.getClass().getSimpleName()));
     }
 
     @Watched(prefix = "element")

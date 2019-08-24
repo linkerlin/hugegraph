@@ -435,10 +435,9 @@ public class GraphTransaction extends IndexableTransaction {
     public Iterator<Vertex> queryVertices(Object... vertexIds) {
         // NOTE: allowed duplicated vertices if query by duplicated ids
         List<Id> ids = InsertionOrderUtil.newList();
-        Map<Id, HugeVertex> vertices = new HashMap<>();
+        Map<Id, HugeVertex> vertices = new HashMap<>(vertexIds.length);
 
         IdQuery query = new IdQuery(HugeType.VERTEX);
-        query.mustSortByInput(false);
         for (Object vertexId : vertexIds) {
             HugeVertex vertex;
             Id id = HugeVertex.getIdValue(vertexId);
@@ -456,8 +455,17 @@ public class GraphTransaction extends IndexableTransaction {
             ids.add(id);
         }
 
+        if (vertices.isEmpty() && !query.empty() &&
+            query.ids().size() == ids.size()) {
+            Iterator<HugeVertex> it = this.queryVerticesFromBackend(query);
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Iterator<Vertex> r = (Iterator) it;
+            return r;
+        }
+
         if (!query.empty()) {
             // Query from backend store
+            query.mustSortByInput(false);
             Iterator<HugeVertex> it = this.queryVerticesFromBackend(query);
             QueryResults.fillMap(it, vertices);
         }
@@ -575,10 +583,9 @@ public class GraphTransaction extends IndexableTransaction {
     public Iterator<Edge> queryEdges(Object... edgeIds) {
         // NOTE: allowed duplicated edges if query by duplicated ids
         List<Id> ids = InsertionOrderUtil.newList();
-        Map<Id, HugeEdge> edges = new HashMap<>();
+        Map<Id, HugeEdge> edges = new HashMap<>(edgeIds.length);
 
         IdQuery query = new IdQuery(HugeType.EDGE);
-        query.mustSortByInput(false);
         for (Object edgeId : edgeIds) {
             HugeEdge edge;
             Id id = HugeEdge.getIdValue(edgeId);
@@ -596,8 +603,17 @@ public class GraphTransaction extends IndexableTransaction {
             ids.add(id);
         }
 
+        if (edges.isEmpty() && !query.empty() &&
+            query.ids().size() == ids.size()) {
+            Iterator<HugeEdge> it = this.queryEdgesFromBackend(query);
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Iterator<Edge> r = (Iterator) it;
+            return r;
+        }
+
         if (!query.empty()) {
             // Query from backend store
+            query.mustSortByInput(false);
             Iterator<HugeEdge> it = this.queryEdgesFromBackend(query);
             QueryResults.fillMap(it, edges);
         }
